@@ -35,9 +35,12 @@ namespace SurtidoresInfo
             //Traigo las descripciones de los productos de la tabla combus
             List<string[]> combus = TraerDescripciones();
 
-            byte[] respuesta = EnviarComando(mensaje);
-            //Uso este comando para leer respuestas guardadas
-            //byte[] respuesta = LeerArchivo("ConfigEstacion1");
+            //byte[] respuesta = EnviarComando(mensaje);
+
+            ///
+            ///Uso este comando para leer respuestas guardadas
+            ///
+            byte[] respuesta = LeerArchivo("ConfigEstacion");
 
             if (respuesta[confirmacion] != 0x0)
             {
@@ -113,8 +116,8 @@ namespace SurtidoresInfo
             {
                 Tanque tanque = new Tanque
                 {
-                    numeroDeTanque = i + 1,
-                    numProducto = respuesta[posicion]
+                    NumeroDeTanque = i + 1,
+                    ProductoTanque = respuesta[posicion]
                 };
                 posicion++;
                 estacionTemp.tanques.Add(tanque);
@@ -237,8 +240,49 @@ namespace SurtidoresInfo
             {
                 throw new Exception("Error al obtener informacion del despacho" + e.Message);
             }
-
             return despachoTemp;
+        }
+        public List<Tanque> InformacionDeTanque(int cantidadDeTanques)
+        {
+            byte[] mensaje = protocolo == 16 ? (new byte[] { 0x70 }) : (new byte[] { 0xC0 });
+            int confirmacion = 0;
+            try
+            {
+                //byte[] respuesta = EnviarComando(new byte[] { (byte)(mensaje[0] + Convert.ToByte()) });
+
+                ///
+                ///Uso este comando para leer respuestas guardadas
+                ///
+                byte[] respuesta = LeerArchivo("infoTanques");
+
+                if (respuesta[confirmacion] != 0x0)
+                {
+                    throw new Exception("No se recibió mensaje de confirmación al solicitar info del surtidor");
+                }
+
+                int posicion = confirmacion + 1;
+
+                for (int i = 0; i < cantidadDeTanques; i++)
+                {
+
+                    foreach (Tanque tanque in Estacion.InstanciaEstacion.tanques)
+                    {
+                        if (tanque.NumeroDeTanque == (i + 1))
+                        {
+                            tanque.NumeroDeTanque = (i + 1);
+                            tanque.VolumenProductoT = LeerCampoVariable(respuesta, ref posicion);
+                            tanque.VolumenAguaT = LeerCampoVariable(respuesta, ref posicion);
+                            tanque.VolumenVacioT = LeerCampoVariable(respuesta, ref posicion);
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error al obtener informacion del tanque" + e.Message);
+            }
+            return Estacion.InstanciaEstacion.tanques;
         }
         private byte[] EnviarComando(byte[] comando)
         {

@@ -65,9 +65,15 @@ namespace SurtidoresInfo
         {
 
         }
-        public int numeroDeTanque { get; set; }
-        public int numProducto { get; set; }
-        public Producto producto { get; set; }
+        public int NumeroDeTanque { get; set; }
+        public int ProductoTanque { get; set; }
+        public string VolumenProductoT { get; set; }
+        public string VolumenAguaT { get; set; }
+        public string VolumenVacioT { get; set; }
+        public string VolumenProductoP { get; set; }
+        public string VolumenAguaP { get; set; }
+        public string VolumenVacioP { get; set; }
+        public Producto Producto { get; set; }
     }
     /**
      * Es el "Tipo Surtidor X" y me dice la cantidad de mangueras

@@ -73,6 +73,7 @@ namespace SurtidoresInfo
                 try
                 {
                     //instancia.GrabarDespachos();
+                    instancia.GrabarTanques();
 
                     /// Espera para procesar nuevamente
                     Thread.Sleep(loopDelaySeconds * 1000);

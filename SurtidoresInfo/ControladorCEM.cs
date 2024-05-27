@@ -238,6 +238,21 @@ namespace SurtidoresInfo
 
         public override void GrabarTanques()
         {
+            try{
+                List<Tanque> tanques = conectorCEM.InformacionDeTanque(Estacion.InstanciaEstacion.tanques.Count);
+
+                for (int i = 0; i < tanques.Count; i++)
+                {
+                    int res = ConectorSQLite.query("UPDATE tanques SET volumen = '" + tanques[i].VolumenProductoT + 
+                        "" + "', total = '" + (Convert.ToDouble(tanques[i].VolumenProductoT) + Convert.ToDouble(tanques[i].VolumenVacioT) + Convert.ToDouble(tanques[i].VolumenAguaT)).ToString() +
+                        "" + "' WHERE id = " + i);
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error en el método traer tanques. Excepcion: " + e.Message);
+            }
+
             throw new NotImplementedException();
         }
     }
