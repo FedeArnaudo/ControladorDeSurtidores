@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.34407.143
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SurtidoresInfo", "SurtidoresInfo\SurtidoresInfo.csproj", "{A3268B92-0CCF-4F77-8222-DA8A2A7774FB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A3268B92-0CCF-4F77-8222-DA8A2A7774FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3268B92-0CCF-4F77-8222-DA8A2A7774FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3268B92-0CCF-4F77-8222-DA8A2A7774FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3268B92-0CCF-4F77-8222-DA8A2A7774FB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BCF98CA7-BB7B-4EAA-9A2A-3EAE548DA38A}
+	EndGlobalSection
+EndGlobal
