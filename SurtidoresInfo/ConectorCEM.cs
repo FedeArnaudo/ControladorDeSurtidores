@@ -284,6 +284,10 @@ namespace SurtidoresInfo
             }
             return Estacion.InstanciaEstacion.tanques;
         }
+        public void CierreDeTurno()
+        {
+
+        }
         private byte[] EnviarComando(byte[] comando)
         {
             byte[] buffer;

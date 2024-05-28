@@ -151,4 +151,15 @@ namespace SurtidoresInfo
         public static TablaDespachos InstanciaDespachos { get; } = new TablaDespachos();
         public List<InfoDespacho> InfoDespachos { get; set; }
     }
+
+    public class TotalMedioPago
+    {
+        public TotalMedioPago()
+        {
+
+        }
+        public int NumeroMedioPago { get; set; }
+        public int TotalMedioPagoMonto { get; set; }
+        public int TotalMedioPagoVolumen { get; set; }
+    }
 }
