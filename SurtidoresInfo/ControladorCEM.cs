@@ -11,48 +11,59 @@ namespace SurtidoresInfo
         {
             conectorCEM = new ConectorCEM();
             GrabarConfigEstacion();
+            GrabarTanques();
         }
-        public void GrabarConfigEstacion()
+        public override void GrabarConfigEstacion()
         {
-            Estacion estacion = conectorCEM.ConfiguracionDeLaEstacion();
-            List<Surtidor> tempSurtidores = estacion.nivelesDePrecio[0];
-            foreach (Surtidor surtidor in tempSurtidores)
+            try
             {
-                string campos = "IdSurtidor,Manguera,Producto,Precio,DescProd";
-                List<Manguera> tempManguera = surtidor.mangueras;
-                foreach (Manguera manguera in tempManguera)
+                Estacion estacion = conectorCEM.ConfiguracionDeLaEstacion();
+                List<Surtidor> tempSurtidores = estacion.nivelesDePrecio[0];
+                foreach (Surtidor surtidor in tempSurtidores)
                 {
-                    string letra = "A";
-                    if (manguera.numeroDeManquera == 2)
+                    string campos = "IdSurtidor,Manguera,Producto,Precio,DescProd";
+                    List<Manguera> tempManguera = surtidor.mangueras;
+                    foreach (Manguera manguera in tempManguera)
                     {
-                        letra = "B";
-                    }
-                    else if (manguera.numeroDeManquera == 3)
-                    {
-                        letra = "C";
-                    }
-                    else if (manguera.numeroDeManquera == 4)
-                    {
-                        letra = "D";
-                    }
-                    string rows = string.Format("{0},'{1}','{2}','{3}','{4}'",
-                        surtidor.numeroDeSurtidor,
-                        letra,
-                        manguera.producto.numeroDeProducto,
-                        manguera.producto.precioUnitario.ToString(),
-                        manguera.producto.descripcion);
-
-                    DataTable tabla = ConectorSQLite.dt_query("SELECT * FROM Surtidores WHERE IdSurtidor = " + surtidor.numeroDeSurtidor + " AND Manguera = '" + letra + "'");
-
-                    _ = tabla.Rows.Count == 0
-                        ? ConectorSQLite.query(string.Format("INSERT INTO Surtidores ({0}) VALUES ({1})", campos, rows))
-                        : ConectorSQLite.query(string.Format("UPDATE Surtidores SET Producto = ('{0}'), Precio = ('{1}'), DescProd = ('{2}') WHERE IdSurtidor = ({3}) AND Manguera = ('{4}')",
+                        string letra = null;
+                        switch (manguera.numeroDeManquera)
+                        {
+                            case 1:
+                                letra = "A";
+                                break;
+                            case 2:
+                                letra = "B";
+                                break;
+                            case 3:
+                                letra = "C";
+                                break;
+                            case 4:
+                                letra = "D";
+                                break;
+                        }
+                        string rows = string.Format("{0},'{1}','{2}','{3}','{4}'",
+                            surtidor.numeroDeSurtidor,
+                            letra,
                             manguera.producto.numeroDeProducto,
                             manguera.producto.precioUnitario.ToString(),
-                            manguera.producto.descripcion,
-                            surtidor.numeroDeSurtidor,
-                            letra));
+                            manguera.producto.descripcion);
+
+                        DataTable tabla = ConectorSQLite.dt_query("SELECT * FROM Surtidores WHERE IdSurtidor = " + surtidor.numeroDeSurtidor + " AND Manguera = '" + letra + "'");
+
+                        _ = tabla.Rows.Count == 0
+                            ? ConectorSQLite.query(string.Format("INSERT INTO Surtidores ({0}) VALUES ({1})", campos, rows))
+                            : ConectorSQLite.query(string.Format("UPDATE Surtidores SET Producto = ('{0}'), Precio = ('{1}'), DescProd = ('{2}') WHERE IdSurtidor = ({3}) AND Manguera = ('{4}')",
+                                manguera.producto.numeroDeProducto,
+                                manguera.producto.precioUnitario.ToString(),
+                                manguera.producto.descripcion,
+                                surtidor.numeroDeSurtidor,
+                                letra));
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"Error en el metodo GrabarConfigEstacion. Excepcion: {e.Message}");
             }
         }
         /*
@@ -66,22 +77,6 @@ namespace SurtidoresInfo
                 {
                     Despacho despacho = conectorCEM.InformacionDeSurtidor(i);
                     List<InfoDespacho> infoDespachos = TablaDespachos.InstanciaDespachos.InfoDespachos;
-                    /*bool existeUltimo = false;
-                    bool existeAnterior = false;
-                    if (infoDespachos.Count != 0)
-                    {
-                        foreach (InfoDespacho info in infoDespachos)
-                        {
-                            if (info.ID.Equals(despacho.idUltimaVenta))
-                            {
-                                existeUltimo = true;
-                            }
-                            else if (info.ID.Equals(despacho.idVentaAnterior))
-                            {
-                                existeAnterior = true;
-                            }
-                        }
-                    }*/
 
                     if (despacho.nroUltimaVenta == 0 || despacho.idUltimaVenta == null || despacho.idUltimaVenta == "")
                     {
@@ -243,17 +238,25 @@ namespace SurtidoresInfo
 
                 for (int i = 0; i < tanques.Count; i++)
                 {
-                    int res = ConectorSQLite.query("UPDATE tanques SET volumen = '" + tanques[i].VolumenProductoT + 
+                    int res = ConectorSQLite.query("UPDATE Tanques SET volumen = '" + tanques[i].VolumenProductoT + 
                         "" + "', total = '" + (Convert.ToDouble(tanques[i].VolumenProductoT) + Convert.ToDouble(tanques[i].VolumenVacioT) + Convert.ToDouble(tanques[i].VolumenAguaT)).ToString() +
-                        "" + "' WHERE id = " + i);
+                        "" + "' WHERE id = " + tanques[i].NumeroDeTanque);
+
+                    if (res == 0)
+                    {
+                        string campos = "id,volumen,total";
+                        string rows = string.Format("{0},'{1}','{2}'",
+                            tanques[i].NumeroDeTanque,
+                            tanques[i].VolumenProductoT,
+                            (Convert.ToDouble(tanques[i].VolumenProductoT) + Convert.ToDouble(tanques[i].VolumenVacioT) + Convert.ToDouble(tanques[i].VolumenAguaT)).ToString());
+                        _ = ConectorSQLite.query(string.Format("INSERT INTO Tanques ({0}) VALUES ({1})", campos, rows));
+                    }
                 }
             }
             catch (Exception e)
             {
                 throw new Exception("Error en el método traer tanques. Excepcion: " + e.Message);
             }
-
-            throw new NotImplementedException();
         }
     }
 }

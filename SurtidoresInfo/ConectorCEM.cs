@@ -135,9 +135,9 @@ namespace SurtidoresInfo
             Despacho despachoTemp = new Despacho();
             try
             {
-                byte[] respuesta = EnviarComando(new byte[] { (byte)(mensaje[0] + Convert.ToByte(numeroDeSurtidor)) });
+                //byte[] respuesta = EnviarComando(new byte[] { (byte)(mensaje[0] + Convert.ToByte(numeroDeSurtidor)) });
                 //Uso este comando para leer respuestas guardadas
-                //byte[] respuesta = LeerArchivo("despacho-" + numeroDeSurtidor);
+                byte[] respuesta = LeerArchivo("despacho-" + numeroDeSurtidor);
                 if (respuesta[confirmacion] != 0x0)
                 {
                     throw new Exception("No se recibió mensaje de confirmación al solicitar info del surtidor");
@@ -307,6 +307,11 @@ namespace SurtidoresInfo
             }
             return buffer;
         }
+        /*
+         * Metodo para leer los campos variables, por ejemplo precios o cantidades.
+         * El metodo para frenar la iteracion, es un valor conocido, proporcionado por el fabricante
+         * denominado como "separador".
+         */
         private string LeerCampoVariable(byte[] data, ref int pos)
         {
             string ret = "";
@@ -321,6 +326,11 @@ namespace SurtidoresInfo
             pos = i;
             return ret;
         }
+        /*
+         * Metodo para saltearse los valores que no son utilizados en la respuesta del CEM.
+         * Al finalizar el proceso del metodo, el valor de la posicion queda seteada para
+         * el siguiente dato a procesar.
+         */
         private void DescartarCampoVariable(byte[] data, ref int pos)
         {
             while (data[pos] != separador)
@@ -371,6 +381,9 @@ namespace SurtidoresInfo
             }
             return respuesta;
         }
+        /*
+         *  Metodo para obtener las descripciones de los combustibles, de la tabla combus
+         */
         private List<string[]> TraerDescripciones()
         {
             List<string[]> datos = new List<string[]>();
@@ -411,7 +424,7 @@ namespace SurtidoresInfo
             catch (Exception ex)
             {
                 // Manejar la excepción
-                Console.WriteLine($"Error al acceder a la tabla: {ex.Message}");
+                Console.WriteLine($"Error al acceder a la tabla Combus. Excepcion: {ex.Message}");
             }
             return datos;
         }

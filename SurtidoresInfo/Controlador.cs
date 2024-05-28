@@ -28,6 +28,8 @@ namespace SurtidoresInfo
         // Tiempo de espera entre cada procesamiento en segundos.
         private static readonly int loopDelaySeconds = 2;
 
+        public abstract void GrabarConfigEstacion();
+
         /// <summary>
         /// Este método estático es el encargado de procesar la informacion de los surtidores
         /// y guardarla en latabla de la base de datos, correspondiente
@@ -72,8 +74,7 @@ namespace SurtidoresInfo
             {
                 try
                 {
-                    //instancia.GrabarDespachos();
-                    instancia.GrabarTanques();
+                    instancia.GrabarDespachos();
 
                     /// Espera para procesar nuevamente
                     Thread.Sleep(loopDelaySeconds * 1000);

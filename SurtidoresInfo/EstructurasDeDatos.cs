@@ -70,9 +70,6 @@ namespace SurtidoresInfo
         public string VolumenProductoT { get; set; }
         public string VolumenAguaT { get; set; }
         public string VolumenVacioT { get; set; }
-        public string VolumenProductoP { get; set; }
-        public string VolumenAguaP { get; set; }
-        public string VolumenVacioP { get; set; }
         public Producto Producto { get; set; }
     }
     /**
