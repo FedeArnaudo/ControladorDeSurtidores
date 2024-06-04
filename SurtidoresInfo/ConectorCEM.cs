@@ -86,7 +86,7 @@ namespace SurtidoresInfo
                 };
                 posicion++;
                 surtidor.tipoDeSurtidor = respuesta[posicion] + 1;
-                estacionTemp.numeroDeMangerasTotales += respuesta[posicion] + 1;
+                estacionTemp.numeroDeMangeras += respuesta[posicion] + 1;
                 posicion++;
 
                 for (int j = 0; j < surtidor.tipoDeSurtidor; j++)
@@ -124,7 +124,7 @@ namespace SurtidoresInfo
             }
             return estacionTemp;
         }
-        public Despacho InformacionDeSurtidor(int numeroDeSurtidor)
+        public Despacho InfoDeSurtidor(int numeroDeSurtidor)
         {
             byte[] mensaje = protocolo == 16 ? (new byte[] { 0x70 }) : (new byte[] { 0xC0 });
             int confirmacion = 0;
@@ -242,7 +242,7 @@ namespace SurtidoresInfo
             }
             return despachoTemp;
         }
-        public List<Tanque> InformacionDeTanque(int cantidadDeTanques)
+        public List<Tanque> InfoDeTanques(int cantidadDeTanques)
         {
             byte[] mensaje = protocolo == 16 ? (new byte[] { 0x70 }) : (new byte[] { 0xC0 });
             int confirmacion = 0;
@@ -284,9 +284,117 @@ namespace SurtidoresInfo
             }
             return Estacion.InstanciaEstacion.tanques;
         }
-        public void CierreDeTurno()
+        public CierreDeTurno InfoTurnoEnCurso()
         {
+            byte[] mensaje = new byte[] { 0x08 };
+            int estadoTurno = 0;
+            CierreDeTurno cierreDeTurno = new CierreDeTurno();
+            Estacion infoConfigEstacion = Estacion.InstanciaEstacion;
+            try
+            {
+                //byte[] respuesta = EnviarComando(new byte[] { mensaje[0] });
+                byte[] respuesta = LeerArchivo("turnoEnCurso1");
+                if (respuesta[estadoTurno] == 0xFF)
+                {
+                    return cierreDeTurno;
+                }
 
+                int posicion = estadoTurno + 1;
+
+                int cantidadMediosDePago = 8;
+                for (int i = 0; i < cantidadMediosDePago; i++)
+                {
+                    TotalMedioDePago totalMedioDePagoTemp = new TotalMedioDePago();
+
+                    totalMedioDePagoTemp.NumeroMedioPago = i +  1;
+                    totalMedioDePagoTemp.TotalMonto = LeerCampoVariable(respuesta, ref posicion);
+                    totalMedioDePagoTemp.TotalVolumen = LeerCampoVariable(respuesta, ref posicion);
+
+                    cierreDeTurno.TotalesMediosDePago.Add(totalMedioDePagoTemp);
+                }
+
+                cierreDeTurno.Impuesto1 = LeerCampoVariable(respuesta, ref posicion);
+                cierreDeTurno.Impuesto2 = LeerCampoVariable(respuesta, ref posicion);
+
+                cierreDeTurno.PeriodoDePrecios = respuesta[posicion];
+                posicion++;
+                for (int i = 0; i < cierreDeTurno.PeriodoDePrecios; i++)
+                {
+                    List<List<TotalPorProducto>> totalesPorProductoPorNivelesTemp = new List<List<TotalPorProducto>>();
+                    cierreDeTurno.NivelesDePrecios = respuesta[posicion];
+                    posicion++;
+                    for (int j = 0; j < cierreDeTurno.NivelesDePrecios; j++)
+                    {
+                        List<TotalPorProducto> totalesPorProductoTemp = new List<TotalPorProducto>();
+                        List<Producto> productosTemp = infoConfigEstacion.productos;
+                        foreach (Producto producto in productosTemp)
+                        {
+                            TotalPorProducto totalPorProductoTemp = new TotalPorProducto
+                            {
+                                Periodo = i + 1,
+                                Nivel = j + 1,
+
+                                NumeroDeProducto = producto.numeroDeProducto,
+                                TotalMonto = LeerCampoVariable(respuesta, ref posicion),
+                                TotalVolumen = LeerCampoVariable(respuesta, ref posicion),
+                                PrecioUnitario = LeerCampoVariable(respuesta, ref posicion)
+                            };
+                            /// Me tira el Monto, el total y el numero de producto
+                            totalesPorProductoTemp.Add(totalPorProductoTemp);
+                        }
+                        totalesPorProductoPorNivelesTemp.Add(totalesPorProductoTemp);
+                    }
+                    cierreDeTurno.TotalesPorProductosPorNivelesPorPeriodo.Add(totalesPorProductoPorNivelesTemp);
+                }
+
+                int numeroDeMangueras = infoConfigEstacion.numeroDeMangeras + 1;
+                for (int i = 1; i < numeroDeMangueras; i++)
+                {
+                    TotalPorManguera totalPorMangueraTemp = new TotalPorManguera()
+                    {
+                        NumeroDeManguera = i,
+                        TotalVntasMonto = LeerCampoVariable(respuesta, ref posicion),
+                        TotalVntasVolumen = LeerCampoVariable(respuesta, ref posicion),
+                        TotalVntasSinControlMonto = LeerCampoVariable(respuesta, ref posicion),
+                        TotalVntasSinControlVolumen = LeerCampoVariable(respuesta, ref posicion),
+                        TotalPruebasMonto = LeerCampoVariable(respuesta, ref posicion),
+                        TotalPruebasVolumen = LeerCampoVariable(respuesta, ref posicion)
+                    };
+                    cierreDeTurno.TotalPorMangueras.Add(totalPorMangueraTemp);
+                }
+
+                int numeroDeTanques = infoConfigEstacion.numeroDeTanques + 1;
+                for (int i = 1; i < numeroDeTanques; i++)
+                {
+                    TotalPorTanque totalPorTanqueTemp = new TotalPorTanque
+                    {
+                        NumeroDeTanque = i,
+                        Producto = LeerCampoVariable(respuesta, ref posicion),
+                        Agua = LeerCampoVariable(respuesta, ref posicion),
+                        Vacio = LeerCampoVariable(respuesta, ref posicion),
+                        Capacidad = LeerCampoVariable(respuesta, ref posicion)
+                    };
+                }
+
+                int cantidadDeProductos = infoConfigEstacion.numeroDeProductos + 1;
+                for (int i = 1; i < cantidadDeProductos; i++)
+                {
+                    ProductoEnTanque productoEnTanqueTemp = new ProductoEnTanque
+                    {
+                        NumeroDeProducto = i,
+                        VolumenEnTanques = LeerCampoVariable(respuesta, ref posicion),
+                        AguaEnTanques = LeerCampoVariable(respuesta, ref posicion),
+                        VacioEnTanques = LeerCampoVariable(respuesta, ref posicion),
+                        CapacidadEnTanques = LeerCampoVariable(respuesta, ref posicion)
+                    };
+                    cierreDeTurno.ProductoEnTanques.Add(productoEnTanqueTemp);
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"Error procesando el cierre de turno. Excepcion: {e.Message}");
+            }
+            return cierreDeTurno;
         }
         private byte[] EnviarComando(byte[] comando)
         {

@@ -42,6 +42,8 @@ namespace SurtidoresInfo
         /// 
         public abstract void GrabarTanques();
 
+        public abstract void GrabarCierre();
+
         /// <summary>
         /// Este método estático es el encargado de crear la instancia del controlador
         /// correspondiente y ejecutar el hilo del proceso automático
@@ -75,6 +77,7 @@ namespace SurtidoresInfo
                 try
                 {
                     instancia.GrabarDespachos();
+                    //instancia.GrabarCierre();
 
                     /// Espera para procesar nuevamente
                     Thread.Sleep(loopDelaySeconds * 1000);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,8 +23,10 @@ namespace SurtidoresInfo
         public VerDespacho()
         {
             InitializeComponent();
-            List<InfoDespacho> infoDespachos = TablaDespachos.InstanciaDespachos.InfoDespachos;
-            DataGridDatos.ItemsSource = infoDespachos;
+            DataTable result = ConectorSQLite.dt_query("SELECT * FROM despachos ORDER BY fecha DESC");
+            //List<InfoDespacho> infoDespachos = TablaDespachos.InstanciaDespachos.InfoDespachos;
+            //DataGridDatos.ItemsSource = infoDespachos;
+            DataGridDatos.ItemsSource = result.AsDataView();
         }
         private void btnCerrar_Click(object sender, RoutedEventArgs e)
         {

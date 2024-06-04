@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SurtidoresInfo"
         mc:Ignorable="d"
-        Title="Info Despachos" Height="450" Width="865">
+        Title="Info Despachos" Height="450" Width="905">
     <Window.Resources>
         <!--#region ButtonStyle-->
         <Style x:Key="FocusVisual">
@@ -102,24 +102,26 @@
                       HorizontalGridLinesBrush="#D6E2E8" Margin="0,10,0,20"
                       IsReadOnly="True" AutoGenerateColumns="False">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Posicion" Width="90"
-                                        Binding="{Binding Pos}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="ID" Width="90"
-                                        Binding="{Binding ID}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Surtidor" Width="90"
-                                        Binding="{Binding Surtidor}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="N Producto" Width="90"
-                                        Binding="{Binding Producto}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Monto" Width="90"
-                                        Binding="{Binding Monto}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Volumen" Width="90"
-                                        Binding="{Binding Volumen}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="PPU" Width="90"
+                    <DataGridTextColumn Header="ID" Width="75"
+                                        Binding="{Binding id}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Surtidor" Width="70"
+                                        Binding="{Binding surtidor}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="N Producto" Width="85"
+                                        Binding="{Binding producto}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Monto" Width="80"
+                                        Binding="{Binding monto}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Volumen" Width="75"
+                                        Binding="{Binding volumen}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="PPU" Width="65"
                                         Binding="{Binding PPU}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="YPF Ruta" Width="90"
-                                        Binding="{Binding YPFRuta}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Facturado" Width="75"
+                                        Binding="{Binding facturado}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Fecha" Width="155"
+                                        Binding="{Binding fecha}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="YPF Ruta" Width="75"
+                                        Binding="{Binding YPFruta}"></DataGridTextColumn>
                     <DataGridTextColumn Header="Descripcion" Width="90"
-                                        Binding="{Binding Desc}"></DataGridTextColumn>
+                                        Binding="{Binding DesProd}"></DataGridTextColumn>
                 </DataGrid.Columns>
                 <DataGrid.RowStyle>
                     <Style TargetType="DataGridRow">

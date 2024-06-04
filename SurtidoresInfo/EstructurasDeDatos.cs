@@ -20,7 +20,7 @@ namespace SurtidoresInfo
         public int numeroDeSurtidores { get; set; }
         public int numeroDeTanques { get; set; }
         public int numeroDeProductos { get; set; }
-        public int numeroDeMangerasTotales { get; set; }
+        public int numeroDeMangeras { get; set; }
         public List<List<Surtidor>> nivelesDePrecio { get; set; }
         public List<Tanque> tanques { get; set; }
         public List<Producto> productos { get; set; }
@@ -146,20 +146,79 @@ namespace SurtidoresInfo
     {
         public TablaDespachos()
         {
-            InfoDespachos = new List<InfoDespacho>();
+            //InfoDespachos = new List<InfoDespacho>();
         }
         public static TablaDespachos InstanciaDespachos { get; } = new TablaDespachos();
         public List<InfoDespacho> InfoDespachos { get; set; }
     }
-
-    public class TotalMedioPago
+    #region CierreDeTurno
+    public class CierreDeTurno
     {
-        public TotalMedioPago()
+        private int impuesto1;
+        private int impuesto2;
+        public CierreDeTurno()
         {
-
+            TotalesMediosDePago = new List<TotalMedioDePago>();
+            TotalesPorProductosPorNivelesPorPeriodo = new List<List<List<TotalPorProducto>>>();
+            TotalPorMangueras = new List<TotalPorManguera>();
+            Tanques = new List<TotalPorTanque>();
+            ProductoEnTanques = new List<ProductoEnTanque>();
         }
-        public int NumeroMedioPago { get; set; }
-        public int TotalMedioPagoMonto { get; set; }
-        public int TotalMedioPagoVolumen { get; set; }
+        public List<TotalMedioDePago> TotalesMediosDePago { get; set; }
+        public string Impuesto1 { get; set; }
+        public string Impuesto2 { get; set; }
+        public int PeriodoDePrecios { get; set; }
+        public int NivelesDePrecios { get; set; }
+        public List<List<List<TotalPorProducto>>> TotalesPorProductosPorNivelesPorPeriodo { get; set; }
+        public List<TotalPorManguera> TotalPorMangueras { get; set; }
+        public List<TotalPorTanque> Tanques { get; set; }
+        public List<ProductoEnTanque> ProductoEnTanques { get; set; }
     }
+    public class TotalMedioDePago
+    {
+        public TotalMedioDePago() { }
+        public int NumeroMedioPago { get; set; }
+        public string TotalMonto { get; set; }
+        public string TotalVolumen { get; set; }
+    }
+    public class TotalPorProducto
+    {
+        public TotalPorProducto() { }
+        public int Periodo { get; set; }
+        public int Nivel { get; set; }
+        public string NumeroDeProducto { get; set; }
+        public string PrecioUnitario { get; set; }
+        public string TotalMonto { get; set; }
+        public string TotalVolumen { get; set; }
+    }
+    public class TotalPorManguera
+    {
+        public TotalPorManguera() { }
+        public int NumeroDeManguera { get; set; }
+        public string TotalVntasMonto { get; set; }
+        public string TotalVntasVolumen { get; set; }
+        public string TotalVntasSinControlMonto { get; set; }
+        public string TotalVntasSinControlVolumen { get; set; }
+        public string TotalPruebasMonto { get; set; }
+        public string TotalPruebasVolumen { get; set; }
+    }
+    public class TotalPorTanque
+    {
+        public TotalPorTanque() { }
+        public int NumeroDeTanque { get; set; }
+        public string Producto { get; set; }
+        public string Agua { get; set; }
+        public string Vacio { get; set; }
+        public string Capacidad { get; set; }
+    }
+    public class ProductoEnTanque
+    {
+        public ProductoEnTanque() { }
+        public int NumeroDeProducto { get; set; }
+        public string VolumenEnTanques { get; set; }
+        public string AguaEnTanques { get; set; }
+        public string VacioEnTanques { get; set; }
+        public string CapacidadEnTanques { get; set; }
+    }
+    #endregion
 }

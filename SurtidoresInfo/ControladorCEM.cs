@@ -66,8 +66,76 @@ namespace SurtidoresInfo
                 throw new Exception($"Error en el metodo GrabarConfigEstacion. Excepcion: {e.Message}");
             }
         }
+        public override void GrabarCierre()
+        {
+            try
+            {
+                CierreDeTurno cierreDeTurno = conectorCEM.InfoTurnoEnCurso();
+
+                string query = "INSERT INTO cierres (monto_contado, volumen_contado, monto_YPFruta, volumen_YPFruta) VALUES ({0})";
+                string valores = String.Format(
+                    "'{0}','{1}','{2}','{3}'",
+                    cierreDeTurno.TotalesMediosDePago[0].TotalMonto.Trim().Substring(1),
+                    cierreDeTurno.TotalesMediosDePago[0].TotalVolumen.Trim(),
+                    cierreDeTurno.TotalesMediosDePago[3].TotalMonto.Trim(),
+                    cierreDeTurno.TotalesMediosDePago[3].TotalVolumen.Trim());
+
+                query = String.Format(query, valores);
+
+                ConectorSQLite.query(query);
+
+                // Traer ID del cierre para poder referenciar los detalles
+                query = "SELECT max(id) FROM cierres";
+
+                DataTable table = ConectorSQLite.dt_query(query);
+
+                int id = Convert.ToInt32(table.Rows[0][0]);
+
+                // Grabar cierresxproducto
+                query = "INSERT INTO cierresxProducto (id, producto, monto, volumen) VALUES (" + id + ", {0})";
+                for (int i = 0; i < cierreDeTurno.TotalesPorProductosPorNivelesPorPeriodo[0][0].Count; i++)
+                {
+                    string aux =
+                        (i + 1).ToString() + "," +
+                        "'" + cierreDeTurno.TotalesPorProductosPorNivelesPorPeriodo[0][0][i].TotalMonto.Trim() + "'," +
+                        "'" + cierreDeTurno.TotalesPorProductosPorNivelesPorPeriodo[0][0][i].TotalVolumen.Trim() + "'";
+
+                    aux = String.Format(query, aux);
+
+                    ConectorSQLite.query(aux);
+                }
+
+                Estacion estacion = Estacion.InstanciaEstacion;
+                // Grabar cierresxmanguera
+                query = "INSERT INTO cierresxManguera (id, surtidor, manguera, monto, volumen) VALUES (" + id + ", {0})";
+                int contador = 0;
+                for (int i = 0; i < estacion.numeroDeSurtidores; i++)
+                {
+                    List<Surtidor> surtidores = estacion.nivelesDePrecio[0];
+                    for (int j = 0; j < surtidores[i].tipoDeSurtidor; j++)
+                    {
+                        string aux =
+                            (i + 1).ToString() + "," +
+                            (j + 1).ToString() + "," +
+                            "'" + cierreDeTurno.TotalPorMangueras[contador].TotalVntasMonto.Trim() + "'," +
+                            "'" + cierreDeTurno.TotalPorMangueras[contador].TotalVntasVolumen.Trim() + "'";
+
+                        contador++;
+
+                        aux = String.Format(query, aux);
+
+                        ConectorSQLite.query(aux);
+                    }
+                }
+                ConectorSQLite.query("DELETE FROM despachos");
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"Error en el metodo GrabarCierre. Excepcion: {e.Message}");
+            }
+        }
         /*
-         * Metodo para obtener la informacion de los despachos
+         * Metodo para procesar la informacion que traer el CEM y la guarda en la base
          */
         public override void GrabarDespachos()
         {
@@ -75,8 +143,8 @@ namespace SurtidoresInfo
             {
                 for (int i = 1; i < Estacion.InstanciaEstacion.numeroDeSurtidores + 1; i++)
                 {
-                    Despacho despacho = conectorCEM.InformacionDeSurtidor(i);
-                    List<InfoDespacho> infoDespachos = TablaDespachos.InstanciaDespachos.InfoDespachos;
+                    Despacho despacho = conectorCEM.InfoDeSurtidor(i);
+                    //List<InfoDespacho> infoDespachos = TablaDespachos.InstanciaDespachos.InfoDespachos;
 
                     if (despacho.nroUltimaVenta == 0 || despacho.idUltimaVenta == null || despacho.idUltimaVenta == "")
                     {
@@ -134,7 +202,7 @@ namespace SurtidoresInfo
                                 infoDespacho.YPFRuta = 1;
                             }
                         }
-                        TablaDespachos.InstanciaDespachos.InfoDespachos.Add(infoDespacho);
+                        //TablaDespachos.InstanciaDespachos.InfoDespachos.Add(infoDespacho);
 
                         /// Agregar a Base de Datos
                         string campos = "id,surtidor,producto,monto,volumen,PPU,facturado,YPFruta,DesProd";
@@ -200,7 +268,7 @@ namespace SurtidoresInfo
                                 infoDespacho.YPFRuta = 1;
                             }
                         }
-                        TablaDespachos.InstanciaDespachos.InfoDespachos.Add(infoDespacho);
+                        //TablaDespachos.InstanciaDespachos.InfoDespachos.Add(infoDespacho);
                         /// Agregar a Base de Datos
                         string campos = "id,surtidor,producto,monto,volumen,PPU,facturado,YPFruta,DesProd";
                         string rows = string.Format("'{0}',{1},'{2}','{3}','{4}','{5}',{6},{7},'{8}'",
@@ -216,12 +284,10 @@ namespace SurtidoresInfo
                         _ = ConectorSQLite.query(string.Format("INSERT INTO despachos ({0}) VALUES ({1})", campos, rows));
                     }
 
-                    if (TablaDespachos.InstanciaDespachos.InfoDespachos.Count == 50)
+                    DataTable cantidadDeFilas = ConectorSQLite.dt_query("SELECT * FROM despachos");
+                    if (cantidadDeFilas.Rows.Count >= 50)
                     {
-                        for (int filas = 0; filas < 10; filas++)
-                        {
-                            TablaDespachos.InstanciaDespachos.InfoDespachos.RemoveAt(0);
-                        }
+                        _ = ConectorSQLite.query(@"DELETE FROM despachos WHERE id IN(SELECT id FROM despachos ORDER BY fecha LIMIT 40)");
                     }
                 }
             }
@@ -233,12 +299,13 @@ namespace SurtidoresInfo
 
         public override void GrabarTanques()
         {
-            try{
-                List<Tanque> tanques = conectorCEM.InformacionDeTanque(Estacion.InstanciaEstacion.tanques.Count);
+            try
+            {
+                List<Tanque> tanques = conectorCEM.InfoDeTanques(Estacion.InstanciaEstacion.tanques.Count);
 
                 for (int i = 0; i < tanques.Count; i++)
                 {
-                    int res = ConectorSQLite.query("UPDATE Tanques SET volumen = '" + tanques[i].VolumenProductoT + 
+                    int res = ConectorSQLite.query("UPDATE Tanques SET volumen = '" + tanques[i].VolumenProductoT +
                         "" + "', total = '" + (Convert.ToDouble(tanques[i].VolumenProductoT) + Convert.ToDouble(tanques[i].VolumenVacioT) + Convert.ToDouble(tanques[i].VolumenAguaT)).ToString() +
                         "" + "' WHERE id = " + tanques[i].NumeroDeTanque);
 
