@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -8,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -20,10 +22,12 @@ namespace SurtidoresInfo
     /// </summary>
     public partial class StatusForm : Window
     {
+        private NotifyIcon notifyIcon;
         public StatusForm()
         {
             InitializeComponent();
-            Icon = new BitmapImage(new Uri("pack://application:,,,/SurtidoresInfo;component/LogoSiges.ico"));
+            Icon = new BitmapImage(new Uri("pack://application:,,,/SurtidoresInfo;component/LogoSiges24x24.ico"));
+            SetupNotifyIcon();
             Loaded += new RoutedEventHandler(StatusForm_Load);
         }
         private void StatusForm_Load(object sender, EventArgs e)
@@ -80,6 +84,55 @@ namespace SurtidoresInfo
         {
             VerSurtidores verSurtidores = new VerSurtidores();
             verSurtidores.Show();
+        }
+        private void SetupNotifyIcon()
+        {
+            notifyIcon = new NotifyIcon
+            {
+                Icon = new Icon("LogoSiges24x24.ico"),
+                Visible = true,
+                Text = "Controlador De Surtidores"
+            };
+
+            notifyIcon.DoubleClick += NotifyIcon_DoubleClick;
+
+            var contextMenu = new System.Windows.Forms.ContextMenu();
+            contextMenu.MenuItems.Add("Restaurar", (s, e) => RestoreFromTray());
+            contextMenu.MenuItems.Add("Salir", (s, e) => ExitApplication());
+
+            notifyIcon.ContextMenu = contextMenu;
+        }
+        private void NotifyIcon_DoubleClick(object sender, EventArgs e)
+        {
+            RestoreFromTray();
+        }
+        private void RestoreFromTray()
+        {
+            this.Show();
+            this.WindowState = WindowState.Normal;
+            notifyIcon.Visible = false;
+        }
+        private void ExitApplication()
+        {
+            notifyIcon.Visible = false;
+            System.Windows.Application.Current.Shutdown();
+        }
+
+        protected override void OnStateChanged(EventArgs e)
+        {
+            base.OnStateChanged(e);
+
+            if (this.WindowState == WindowState.Minimized)
+            {
+                this.Hide();
+                notifyIcon.Visible = true;
+            }
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            notifyIcon.Dispose();
+            base.OnClosed(e);
         }
     }
 }

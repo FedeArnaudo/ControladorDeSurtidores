@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:SurtidoresInfo"
         Icon="LogoSiges24x24.ico"
         mc:Ignorable="d"
-        Title="StatusForm" Height="300" Width="370" ResizeMode="NoResize">
+        Title="StatusForm" Height="300" Width="370" ResizeMode="CanMinimize">
     <Window.Resources>
         <!--#region ButtonStle-->
         <Style x:Key="FocusVisual">
