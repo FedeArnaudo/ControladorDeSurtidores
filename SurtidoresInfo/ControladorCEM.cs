@@ -15,9 +15,9 @@ namespace SurtidoresInfo
         }
         public override void GrabarConfigEstacion()
         {
+            Estacion estacion = conectorCEM.ConfiguracionDeLaEstacion();
             try
             {
-                Estacion estacion = conectorCEM.ConfiguracionDeLaEstacion();
                 List<Surtidor> tempSurtidores = estacion.nivelesDePrecio[0];
                 foreach (Surtidor surtidor in tempSurtidores)
                 {
@@ -68,10 +68,10 @@ namespace SurtidoresInfo
         }
         public override void GrabarCierre()
         {
+            ConectorSQLite.query("DELETE FROM cierreBandera");
+            CierreDeTurno cierreDeTurno = conectorCEM.InfoTurnoEnCurso();
             try
             {
-                CierreDeTurno cierreDeTurno = conectorCEM.InfoTurnoEnCurso();
-
                 string query = "INSERT INTO cierres (monto_contado, volumen_contado, monto_YPFruta, volumen_YPFruta) VALUES ({0})";
                 string valores = String.Format(
                     "'{0}','{1}','{2}','{3}'",
@@ -139,11 +139,11 @@ namespace SurtidoresInfo
          */
         public override void GrabarDespachos()
         {
-            try
+            for (int i = 1; i < Estacion.InstanciaEstacion.numeroDeSurtidores + 1; i++)
             {
-                for (int i = 1; i < Estacion.InstanciaEstacion.numeroDeSurtidores + 1; i++)
+                Despacho despacho = conectorCEM.InfoDeSurtidor(i);
+                try
                 {
-                    Despacho despacho = conectorCEM.InfoDeSurtidor(i);
                     //List<InfoDespacho> infoDespachos = TablaDespachos.InstanciaDespachos.InfoDespachos;
 
                     if (despacho.nroUltimaVenta == 0 || despacho.idUltimaVenta == null || despacho.idUltimaVenta == "")
@@ -168,7 +168,7 @@ namespace SurtidoresInfo
                             YPFRuta = 0,
                             Desc = ""
                         };
-
+                        // Verificamos YPF en Ruta
                         foreach (Producto p in Estacion.InstanciaEstacion.productos)
                         {
                             if (p.precioUnitario == infoDespacho.PPU)
@@ -221,6 +221,11 @@ namespace SurtidoresInfo
 
                     tabla = ConectorSQLite.dt_query("SELECT * FROM despachos WHERE id = '" + despacho.idVentaAnterior + "' AND surtidor = " + i);
 
+                    if (despacho.idVentaAnterior == null || despacho.idVentaAnterior == "")
+                    {
+                        continue;
+                    }
+
                     /// Procesamiento de la venta anterior
                     if (tabla.Rows.Count == 0)
                     {
@@ -235,6 +240,7 @@ namespace SurtidoresInfo
                             YPFRuta = 0,
                             Desc = ""
                         };
+                        // Verificamos YPF en Ruta
                         foreach (Producto p in Estacion.InstanciaEstacion.productos)
                         {
                             if (p.precioUnitario == infoDespacho.PPU)
@@ -283,26 +289,24 @@ namespace SurtidoresInfo
                             infoDespacho.Desc);
                         _ = ConectorSQLite.query(string.Format("INSERT INTO despachos ({0}) VALUES ({1})", campos, rows));
                     }
-
                     DataTable cantidadDeFilas = ConectorSQLite.dt_query("SELECT * FROM despachos");
                     if (cantidadDeFilas.Rows.Count >= 50)
                     {
                         _ = ConectorSQLite.query(@"DELETE FROM despachos WHERE id IN(SELECT id FROM despachos ORDER BY fecha LIMIT 40)");
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                throw new Exception($"Error en el metodo GrabarDespachos. Excepcion: {e.Message}");
+                catch (Exception e)
+                {
+                    throw new Exception($"Error en el metodo GrabarDespachos. Excepcion: {e.Message}");
+                }
             }
         }
 
         public override void GrabarTanques()
         {
+            List<Tanque> tanques = conectorCEM.InfoDeTanques(Estacion.InstanciaEstacion.tanques.Count);
             try
             {
-                List<Tanque> tanques = conectorCEM.InfoDeTanques(Estacion.InstanciaEstacion.tanques.Count);
-
                 for (int i = 0; i < tanques.Count; i++)
                 {
                     int res = ConectorSQLite.query("UPDATE Tanques SET volumen = '" + tanques[i].VolumenProductoT +

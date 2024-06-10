@@ -23,6 +23,7 @@ namespace SurtidoresInfo
         public StatusForm()
         {
             InitializeComponent();
+            Icon = new BitmapImage(new Uri("pack://application:,,,/SurtidoresInfo;component/LogoSiges.ico"));
             Loaded += new RoutedEventHandler(StatusForm_Load);
         }
         private void StatusForm_Load(object sender, EventArgs e)

@@ -12,6 +12,7 @@ namespace SurtidoresInfo
         public Estacion()
         {
             nivelesDePrecio = new List<List<Surtidor>>();
+            surtidores = new List<Surtidor>();
             tanques = new List<Tanque>();
             productos = new List<Producto>();
         }
@@ -20,8 +21,9 @@ namespace SurtidoresInfo
         public int numeroDeSurtidores { get; set; }
         public int numeroDeTanques { get; set; }
         public int numeroDeProductos { get; set; }
-        public int numeroDeMangeras { get; set; }
+        public int numeroDeMangueras { get; set; }
         public List<List<Surtidor>> nivelesDePrecio { get; set; }
+        public List<Surtidor> surtidores { get; set; }
         public List<Tanque> tanques { get; set; }
         public List<Producto> productos { get; set; }
     }

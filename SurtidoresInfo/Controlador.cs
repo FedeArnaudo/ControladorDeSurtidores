@@ -76,9 +76,15 @@ namespace SurtidoresInfo
             {
                 try
                 {
-                    instancia.GrabarDespachos();
-                    //instancia.GrabarCierre();
-
+                    while (!ConectorSQLite.ComprobarCierre())
+                    {
+                        instancia.GrabarDespachos();
+                        /// Espera para procesar nuevamente
+                        Thread.Sleep(loopDelaySeconds * 1000);
+                    }
+                    instancia.GrabarCierre();
+                    instancia.GrabarConfigEstacion();
+                    instancia.GrabarTanques();
                     /// Espera para procesar nuevamente
                     Thread.Sleep(loopDelaySeconds * 1000);
                 }

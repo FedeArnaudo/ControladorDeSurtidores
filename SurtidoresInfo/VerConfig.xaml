@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SurtidoresInfo"
         mc:Ignorable="d"
+        Icon="LogoSiges.ico"
         Title="Info Surtidores"
         Height="300" Width="370"
         WindowStartupLocation="Manual" Background="Transparent"

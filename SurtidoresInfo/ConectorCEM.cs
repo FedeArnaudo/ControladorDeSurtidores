@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Data.Odbc;
 using System.IO;
 using System.IO.Pipes;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace SurtidoresInfo
 {
@@ -78,6 +76,8 @@ namespace SurtidoresInfo
             estacionTemp.productos = tempProductos;
 
             List<Surtidor> tempSurtidores = new List<Surtidor>();
+            List<List<Surtidor>> tempNivelesDePrecio = new List<List<Surtidor>>();
+            int tempNumeroDeMangueras = 0;
             for (int i = 0; i < estacionTemp.numeroDeSurtidores; i++)
             {
                 Surtidor surtidor = new Surtidor
@@ -86,7 +86,7 @@ namespace SurtidoresInfo
                 };
                 posicion++;
                 surtidor.tipoDeSurtidor = respuesta[posicion] + 1;
-                estacionTemp.numeroDeMangeras += respuesta[posicion] + 1;
+                tempNumeroDeMangueras += respuesta[posicion] + 1;
                 posicion++;
 
                 for (int j = 0; j < surtidor.tipoDeSurtidor; j++)
@@ -110,8 +110,13 @@ namespace SurtidoresInfo
                 surtidor.numeroDeSurtidor = i + 1;
                 tempSurtidores.Add(surtidor);
             }
-            estacionTemp.nivelesDePrecio.Add(tempSurtidores);
+            tempNivelesDePrecio.Add(tempSurtidores);
+            estacionTemp.numeroDeMangueras = tempNumeroDeMangueras;
+            estacionTemp.surtidores = tempSurtidores;
+            estacionTemp.nivelesDePrecio = tempNivelesDePrecio;
+            //estacionTemp.nivelesDePrecio.Add(tempSurtidores);
 
+            List<Tanque> tempTanques = new List<Tanque>();
             for (int i = 0; i < estacionTemp.numeroDeTanques; i++)
             {
                 Tanque tanque = new Tanque
@@ -120,8 +125,9 @@ namespace SurtidoresInfo
                     ProductoTanque = respuesta[posicion]
                 };
                 posicion++;
-                estacionTemp.tanques.Add(tanque);
+                tempTanques.Add(tanque);
             }
+            estacionTemp.tanques = tempTanques;
             return estacionTemp;
         }
         public Despacho InfoDeSurtidor(int numeroDeSurtidor)
@@ -246,7 +252,7 @@ namespace SurtidoresInfo
         }
         public List<Tanque> InfoDeTanques(int cantidadDeTanques)
         {
-            byte[] mensaje = protocolo == 16 ? (new byte[] { 0x70 }) : (new byte[] { 0xC0 });
+            byte[] mensaje = protocolo == 16 ? (new byte[] { 0x68 }) : (new byte[] { 0xB8 });
             int confirmacion = 0;
             try
             {
@@ -255,7 +261,7 @@ namespace SurtidoresInfo
                 ///
                 ///Uso este comando para leer respuestas guardadas
                 ///
-                //byte[] respuesta = LeerArchivo("infoTanques");
+                ///byte[] respuesta = LeerArchivo("infoTanques");
 
                 if (respuesta[confirmacion] != 0x0)
                 {
@@ -266,12 +272,11 @@ namespace SurtidoresInfo
 
                 for (int i = 0; i < cantidadDeTanques; i++)
                 {
-
                     foreach (Tanque tanque in Estacion.InstanciaEstacion.tanques)
                     {
                         if (tanque.NumeroDeTanque == (i + 1))
                         {
-                            tanque.NumeroDeTanque = (i + 1);
+                            tanque.NumeroDeTanque = i + 1;
                             tanque.VolumenProductoT = LeerCampoVariable(respuesta, ref posicion);
                             tanque.VolumenAguaT = LeerCampoVariable(respuesta, ref posicion);
                             tanque.VolumenVacioT = LeerCampoVariable(respuesta, ref posicion);
@@ -288,14 +293,15 @@ namespace SurtidoresInfo
         }
         public CierreDeTurno InfoTurnoEnCurso()
         {
-            byte[] mensaje = new byte[] { 0x08 };
+            //byte[] mensaje = new byte[] { 0x07 };  //Comando para cortar el turno
+            byte[] mensaje = new byte[] { 0x08 };  //Comando para pedir la informacion del turno en curso
             int estadoTurno = 0;
             CierreDeTurno cierreDeTurno = new CierreDeTurno();
             Estacion infoConfigEstacion = Estacion.InstanciaEstacion;
             try
             {
-                //byte[] respuesta = EnviarComando(new byte[] { mensaje[0] });
-                byte[] respuesta = LeerArchivo("turnoEnCurso1");
+                byte[] respuesta = EnviarComando(new byte[] { mensaje[0] });
+                ///byte[] respuesta = LeerArchivo("turnoEnCurso1");
                 if (respuesta[estadoTurno] == 0xFF)
                 {
                     return cierreDeTurno;
@@ -306,11 +312,12 @@ namespace SurtidoresInfo
                 int cantidadMediosDePago = 8;
                 for (int i = 0; i < cantidadMediosDePago; i++)
                 {
-                    TotalMedioDePago totalMedioDePagoTemp = new TotalMedioDePago();
-
-                    totalMedioDePagoTemp.NumeroMedioPago = i +  1;
-                    totalMedioDePagoTemp.TotalMonto = LeerCampoVariable(respuesta, ref posicion);
-                    totalMedioDePagoTemp.TotalVolumen = LeerCampoVariable(respuesta, ref posicion);
+                    TotalMedioDePago totalMedioDePagoTemp = new TotalMedioDePago
+                    {
+                        NumeroMedioPago = i + 1,
+                        TotalMonto = LeerCampoVariable(respuesta, ref posicion),
+                        TotalVolumen = LeerCampoVariable(respuesta, ref posicion)
+                    };
 
                     cierreDeTurno.TotalesMediosDePago.Add(totalMedioDePagoTemp);
                 }
@@ -349,7 +356,7 @@ namespace SurtidoresInfo
                     cierreDeTurno.TotalesPorProductosPorNivelesPorPeriodo.Add(totalesPorProductoPorNivelesTemp);
                 }
 
-                int numeroDeMangueras = infoConfigEstacion.numeroDeMangeras + 1;
+                int numeroDeMangueras = infoConfigEstacion.numeroDeMangueras + 1;
                 for (int i = 1; i < numeroDeMangueras; i++)
                 {
                     TotalPorManguera totalPorMangueraTemp = new TotalPorManguera()

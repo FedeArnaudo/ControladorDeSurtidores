@@ -55,6 +55,27 @@ namespace SurtidoresInfo
             }
             return ret;
         }
+        /// <summary>
+        /// Método para obtener el precio de un producto según su ID
+        /// </summary>
+        /// <param name="productId">ID del producto</param>
+        /// <returns>Precio del producto</returns>
+        public static bool ComprobarCierre()
+        {
+            bool cierreFlag = false;
+
+            string query = $"SELECT EXISTS(SELECT 1 FROM cierreBandera WHERE hacerCierre IS NOT NULL)";
+
+            using (var db = new SQLiteConnection(String.Format(connectionString, Configuracion.leerConfiguracion().ProyNuevoRuta + "\\CDS\\" + databaseName)))
+            {
+                db.Open();
+                using (var command = new SQLiteCommand(query, db))
+                {
+                    cierreFlag = Convert.ToBoolean(command.ExecuteScalar());
+                }
+            }
+            return cierreFlag;
+        }
 
         /// <summary>
         /// Método para obtener el precio de un producto según su ID
