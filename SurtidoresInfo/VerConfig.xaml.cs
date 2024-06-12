@@ -25,7 +25,7 @@ namespace SurtidoresInfo
         public VerConfig()
         {
             InitializeComponent();
-            Icon = new BitmapImage(new Uri("pack://application:,,,/SurtidoresInfo;component/LogoSiges.ico"));
+            Icon = new BitmapImage(new Uri("pack://application:,,,/SurtidoresInfo;component/LogoSiges24x24.ico"));
             //Loaded += new RoutedEventHandler(ConfiguracionForm_Load);
         }
         private void ConfiguracionForm_Load(object sender, EventArgs e)

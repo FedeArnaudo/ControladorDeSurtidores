@@ -23,9 +23,8 @@ namespace SurtidoresInfo
         public VerDespacho()
         {
             InitializeComponent();
+            Icon = new BitmapImage(new Uri("pack://application:,,,/SurtidoresInfo;component/LogoSiges24x24.ico"));
             DataTable result = ConectorSQLite.dt_query("SELECT * FROM despachos ORDER BY fecha DESC");
-            //List<InfoDespacho> infoDespachos = TablaDespachos.InstanciaDespachos.InfoDespachos;
-            //DataGridDatos.ItemsSource = infoDespachos;
             DataGridDatos.ItemsSource = result.AsDataView();
         }
         private void btnCerrar_Click(object sender, RoutedEventArgs e)

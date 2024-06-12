@@ -4,9 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SurtidoresInfo"
-        Icon="LogoSiges.ico"
+        Icon="LogoSiges24x24.ico"
         mc:Ignorable="d"
-        Title="StatusForm" Height="300" Width="370" ResizeMode="NoResize">
+        Title="StatusForm" Height="300" Width="370" ResizeMode="CanMinimize">
     <Window.Resources>
         <!--#region ButtonStle-->
         <Style x:Key="FocusVisual">

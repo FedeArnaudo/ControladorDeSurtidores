@@ -144,20 +144,9 @@ namespace SurtidoresInfo
         public int YPFRuta { get; set; }
         public string Desc { get; set; }
     }
-    public class TablaDespachos
-    {
-        public TablaDespachos()
-        {
-            //InfoDespachos = new List<InfoDespacho>();
-        }
-        public static TablaDespachos InstanciaDespachos { get; } = new TablaDespachos();
-        public List<InfoDespacho> InfoDespachos { get; set; }
-    }
     #region CierreDeTurno
     public class CierreDeTurno
     {
-        private int impuesto1;
-        private int impuesto2;
         public CierreDeTurno()
         {
             TotalesMediosDePago = new List<TotalMedioDePago>();

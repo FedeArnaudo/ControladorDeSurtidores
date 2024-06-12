@@ -33,12 +33,12 @@ namespace SurtidoresInfo
             //Traigo las descripciones de los productos de la tabla combus
             List<string[]> combus = TraerDescripciones();
 
-            byte[] respuesta = EnviarComando(mensaje);
+            ///byte[] respuesta = EnviarComando(mensaje);
 
             ///
             ///Uso este comando para leer respuestas guardadas
             ///
-            ///byte[] respuesta = LeerArchivo("ConfigEstacion");
+            byte[] respuesta = LeerArchivo("ConfigEstacion");
 
             if (respuesta[confirmacion] != 0x0)
             {
@@ -141,11 +141,11 @@ namespace SurtidoresInfo
             Despacho despachoTemp = new Despacho();
             try
             {
-                byte[] respuesta = EnviarComando(new byte[] { (byte)(mensaje[0] + Convert.ToByte(numeroDeSurtidor)) });
+                ///byte[] respuesta = EnviarComando(new byte[] { (byte)(mensaje[0] + Convert.ToByte(numeroDeSurtidor)) });
                 ///
                 ///Uso este comando para leer respuestas guardadas
                 ///
-                ///byte[] respuesta = LeerArchivo("despacho-" + numeroDeSurtidor);
+                byte[] respuesta = LeerArchivo("despacho-" + numeroDeSurtidor);
                 if (respuesta[confirmacion] != 0x0)
                 {
                     throw new Exception("No se recibió mensaje de confirmación al solicitar info del surtidor");
@@ -256,12 +256,12 @@ namespace SurtidoresInfo
             int confirmacion = 0;
             try
             {
-                byte[] respuesta = EnviarComando(new byte[] { mensaje[0] });
+                ///byte[] respuesta = EnviarComando(new byte[] { mensaje[0] });
 
                 ///
                 ///Uso este comando para leer respuestas guardadas
                 ///
-                ///byte[] respuesta = LeerArchivo("infoTanques");
+                byte[] respuesta = LeerArchivo("infoTanques");
 
                 if (respuesta[confirmacion] != 0x0)
                 {
@@ -300,8 +300,8 @@ namespace SurtidoresInfo
             Estacion infoConfigEstacion = Estacion.InstanciaEstacion;
             try
             {
-                byte[] respuesta = EnviarComando(new byte[] { mensaje[0] });
-                ///byte[] respuesta = LeerArchivo("turnoEnCurso1");
+                ///byte[] respuesta = EnviarComando(new byte[] { mensaje[0] });
+                byte[] respuesta = LeerArchivo("turnoEnCurso1");
                 if (respuesta[estadoTurno] == 0xFF)
                 {
                     return cierreDeTurno;

@@ -22,6 +22,7 @@ namespace SurtidoresInfo
         public VerSurtidores()
         {
             InitializeComponent();
+            Icon = new BitmapImage(new Uri("pack://application:,,,/SurtidoresInfo;component/LogoSiges24x24.ico"));
             List<ConfigEstacion> infoSurtidors = MostrarConfiguracion();
             DataGridDatos.ItemsSource = infoSurtidors;
         }
