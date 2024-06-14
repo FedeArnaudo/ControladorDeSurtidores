@@ -148,7 +148,7 @@ namespace SurtidoresInfo
                 {
                     //List<InfoDespacho> infoDespachos = TablaDespachos.InstanciaDespachos.InfoDespachos;
 
-                    if (despacho.nroUltimaVenta == 0 || despacho.idUltimaVenta == null || despacho.idUltimaVenta == "")
+                    if (despacho.nroUltimaVenta == 0 || despacho.idUltimaVenta == null || despacho.idUltimaVenta == "" || despacho.idUltimaVenta.EndsWith("0000"))
                     {
                         continue;
                     }
