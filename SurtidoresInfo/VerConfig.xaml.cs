@@ -1,18 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using CheckBox = System.Windows.Controls.CheckBox;
 
 namespace SurtidoresInfo
@@ -30,9 +19,9 @@ namespace SurtidoresInfo
         }
         private void ConfiguracionForm_Load(object sender, EventArgs e)
         {
-            if (Configuracion.existeConfiguracion())
+            if (Configuracion.ExisteConfiguracion())
             {
-                Configuracion.InfoConfig infoConfig = Configuracion.leerConfiguracion();
+                Configuracion.InfoConfig infoConfig = Configuracion.LeerConfiguracion();
 
                 TextBoxPryNuevo.Text = infoConfig.ProyNuevoRuta;
                 TextBoxIP.Text = infoConfig.IpControlador;
@@ -78,8 +67,9 @@ namespace SurtidoresInfo
                             _ = System.Windows.MessageBox.Show("Debe ingresar el Protocolo de la Estacion");
                         }
 
-                        if (completado && Configuracion.guardarConfiguracion(infoConfig))
+                        if (completado && Configuracion.GuardarConfiguracion(infoConfig))
                         {
+                            _ = Log.Instance.WriteLog("Configuracón guardada correctamente", Log.LogType.t_info);
                             _ = System.Windows.MessageBox.Show("Configuracón guardada correctamente",
                                 "Exito!", (MessageBoxButton)MessageBoxButtons.OK, (MessageBoxImage)MessageBoxIcon.Information);
                             Close();
@@ -99,30 +89,6 @@ namespace SurtidoresInfo
             {
                 _ = System.Windows.MessageBox.Show("Debe ingresar la ruta del proyecto");
             }
-
-            /*if (!TextBoxIP.Text.Equals("") && (CheckBoxProtocol16.IsChecked == true || CheckBoxProtocol32.IsChecked == true))
-            {
-                string protocolo = CheckBoxProtocol16.IsChecked.ToString();
-                if (CheckBoxProtocol32.IsChecked == true)
-                {
-                    protocolo = CheckBoxProtocol32.IsChecked.ToString();
-                }
-                if (Controlador.init(TextBoxIP.Text, ComboBoxTipo.Text, protocolo))
-                {
-                    _ = MessageBox.Show("Los datos se han cargado correctamente");
-                    VerSurtidores verSurtidores = new VerSurtidores();
-                    verSurtidores.Show();
-                    Close();
-                }
-            }
-            else if(TextBoxIP.Text.Equals(""))
-            {
-                _ = MessageBox.Show("Ingrese una IP");
-            }
-            else
-            {
-                _ = MessageBox.Show("Debe elegir un protocolo");
-            }*/
         }
 
         private void CheckBoxProtocol16_Checked(object sender, RoutedEventArgs e)

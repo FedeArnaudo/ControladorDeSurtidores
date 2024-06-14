@@ -101,6 +101,7 @@
     <Compile Include="Controlador.cs" />
     <Compile Include="ControladorCEM.cs" />
     <Compile Include="EstructurasDeDatos.cs" />
+    <Compile Include="Log.cs" />
     <Compile Include="StatusForm.xaml.cs">
       <DependentUpon>StatusForm.xaml</DependentUpon>
     </Compile>
@@ -160,9 +161,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="LogoSiges.ico" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="LogoSiges24x24.ico" />

@@ -40,6 +40,8 @@ namespace SurtidoresInfo
                             case 4:
                                 letra = "D";
                                 break;
+                            default:
+                                break;
                         }
                         string rows = string.Format("{0},'{1}','{2}','{3}','{4}'",
                             surtidor.numeroDeSurtidor,
@@ -48,11 +50,11 @@ namespace SurtidoresInfo
                             manguera.producto.precioUnitario.ToString(),
                             manguera.producto.descripcion);
 
-                        DataTable tabla = ConectorSQLite.dt_query("SELECT * FROM Surtidores WHERE IdSurtidor = " + surtidor.numeroDeSurtidor + " AND Manguera = '" + letra + "'");
+                        DataTable tabla = ConectorSQLite.Dt_query("SELECT * FROM Surtidores WHERE IdSurtidor = " + surtidor.numeroDeSurtidor + " AND Manguera = '" + letra + "'");
 
                         _ = tabla.Rows.Count == 0
-                            ? ConectorSQLite.query(string.Format("INSERT INTO Surtidores ({0}) VALUES ({1})", campos, rows))
-                            : ConectorSQLite.query(string.Format("UPDATE Surtidores SET Producto = ('{0}'), Precio = ('{1}'), DescProd = ('{2}') WHERE IdSurtidor = ({3}) AND Manguera = ('{4}')",
+                            ? ConectorSQLite.Query(string.Format("INSERT INTO Surtidores ({0}) VALUES ({1})", campos, rows))
+                            : ConectorSQLite.Query(string.Format("UPDATE Surtidores SET Producto = ('{0}'), Precio = ('{1}'), DescProd = ('{2}') WHERE IdSurtidor = ({3}) AND Manguera = ('{4}')",
                                 manguera.producto.numeroDeProducto,
                                 manguera.producto.precioUnitario.ToString(),
                                 manguera.producto.descripcion,
@@ -68,26 +70,26 @@ namespace SurtidoresInfo
         }
         public override void GrabarCierre()
         {
-            ConectorSQLite.query("DELETE FROM cierreBandera");
+            _ = ConectorSQLite.Query("DELETE FROM cierreBandera");
             CierreDeTurno cierreDeTurno = conectorCEM.InfoTurnoEnCurso();
             try
             {
                 string query = "INSERT INTO cierres (monto_contado, volumen_contado, monto_YPFruta, volumen_YPFruta) VALUES ({0})";
-                string valores = String.Format(
+                string valores = string.Format(
                     "'{0}','{1}','{2}','{3}'",
                     cierreDeTurno.TotalesMediosDePago[0].TotalMonto.Trim().Substring(1),
                     cierreDeTurno.TotalesMediosDePago[0].TotalVolumen.Trim(),
                     cierreDeTurno.TotalesMediosDePago[3].TotalMonto.Trim(),
                     cierreDeTurno.TotalesMediosDePago[3].TotalVolumen.Trim());
 
-                query = String.Format(query, valores);
+                query = string.Format(query, valores);
 
-                ConectorSQLite.query(query);
+                _ = ConectorSQLite.Query(query);
 
                 // Traer ID del cierre para poder referenciar los detalles
                 query = "SELECT max(id) FROM cierres";
 
-                DataTable table = ConectorSQLite.dt_query(query);
+                DataTable table = ConectorSQLite.Dt_query(query);
 
                 int id = Convert.ToInt32(table.Rows[0][0]);
 
@@ -100,9 +102,9 @@ namespace SurtidoresInfo
                         "'" + cierreDeTurno.TotalesPorProductosPorNivelesPorPeriodo[0][0][i].TotalMonto.Trim() + "'," +
                         "'" + cierreDeTurno.TotalesPorProductosPorNivelesPorPeriodo[0][0][i].TotalVolumen.Trim() + "'";
 
-                    aux = String.Format(query, aux);
+                    aux = string.Format(query, aux);
 
-                    ConectorSQLite.query(aux);
+                    _ = ConectorSQLite.Query(aux);
                 }
 
                 Estacion estacion = Estacion.InstanciaEstacion;
@@ -122,12 +124,12 @@ namespace SurtidoresInfo
 
                         contador++;
 
-                        aux = String.Format(query, aux);
+                        aux = string.Format(query, aux);
 
-                        ConectorSQLite.query(aux);
+                        _ = ConectorSQLite.Query(aux);
                     }
                 }
-                ConectorSQLite.query("DELETE FROM despachos");
+                _ = ConectorSQLite.Query("DELETE FROM despachos");
             }
             catch (Exception e)
             {
@@ -151,7 +153,7 @@ namespace SurtidoresInfo
                         continue;
                     }
 
-                    DataTable tabla = ConectorSQLite.dt_query("SELECT * FROM despachos WHERE id = '" + despacho.idUltimaVenta + "' AND surtidor = " + i);
+                    DataTable tabla = ConectorSQLite.Dt_query("SELECT * FROM despachos WHERE id = '" + despacho.idUltimaVenta + "' AND surtidor = " + i);
 
                     /// Procesamiento de la ultima venta
                     if (tabla.Rows.Count == 0)
@@ -216,10 +218,10 @@ namespace SurtidoresInfo
                             infoDespacho.Facturado,
                             infoDespacho.YPFRuta,
                             infoDespacho.Desc);
-                        _ = ConectorSQLite.query(string.Format("INSERT INTO despachos ({0}) VALUES ({1})", campos, rows));
+                        _ = ConectorSQLite.Query(string.Format("INSERT INTO despachos ({0}) VALUES ({1})", campos, rows));
                     }
 
-                    tabla = ConectorSQLite.dt_query("SELECT * FROM despachos WHERE id = '" + despacho.idVentaAnterior + "' AND surtidor = " + i);
+                    tabla = ConectorSQLite.Dt_query("SELECT * FROM despachos WHERE id = '" + despacho.idVentaAnterior + "' AND surtidor = " + i);
 
                     if (despacho.idVentaAnterior == null || despacho.idVentaAnterior == "")
                     {
@@ -287,12 +289,12 @@ namespace SurtidoresInfo
                             infoDespacho.Facturado,
                             infoDespacho.YPFRuta,
                             infoDespacho.Desc);
-                        _ = ConectorSQLite.query(string.Format("INSERT INTO despachos ({0}) VALUES ({1})", campos, rows));
+                        _ = ConectorSQLite.Query(string.Format("INSERT INTO despachos ({0}) VALUES ({1})", campos, rows));
                     }
-                    DataTable cantidadDeFilas = ConectorSQLite.dt_query("SELECT * FROM despachos");
+                    DataTable cantidadDeFilas = ConectorSQLite.Dt_query("SELECT * FROM despachos");
                     if (cantidadDeFilas.Rows.Count >= 50)
                     {
-                        _ = ConectorSQLite.query(@"DELETE FROM despachos WHERE id IN(SELECT id FROM despachos ORDER BY fecha LIMIT 40)");
+                        _ = ConectorSQLite.Query(@"DELETE FROM despachos WHERE id IN(SELECT id FROM despachos ORDER BY fecha LIMIT 40)");
                     }
                 }
                 catch (Exception e)
@@ -309,7 +311,7 @@ namespace SurtidoresInfo
             {
                 for (int i = 0; i < tanques.Count; i++)
                 {
-                    int res = ConectorSQLite.query("UPDATE Tanques SET volumen = '" + tanques[i].VolumenProductoT +
+                    int res = ConectorSQLite.Query("UPDATE Tanques SET volumen = '" + tanques[i].VolumenProductoT +
                         "" + "', total = '" + (Convert.ToDouble(tanques[i].VolumenProductoT) + Convert.ToDouble(tanques[i].VolumenVacioT) + Convert.ToDouble(tanques[i].VolumenAguaT)).ToString() +
                         "" + "' WHERE id = " + tanques[i].NumeroDeTanque);
 
@@ -320,7 +322,7 @@ namespace SurtidoresInfo
                             tanques[i].NumeroDeTanque,
                             tanques[i].VolumenProductoT,
                             (Convert.ToDouble(tanques[i].VolumenProductoT) + Convert.ToDouble(tanques[i].VolumenVacioT) + Convert.ToDouble(tanques[i].VolumenAguaT)).ToString());
-                        _ = ConectorSQLite.query(string.Format("INSERT INTO Tanques ({0}) VALUES ({1})", campos, rows));
+                        _ = ConectorSQLite.Query(string.Format("INSERT INTO Tanques ({0}) VALUES ({1})", campos, rows));
                     }
                 }
             }

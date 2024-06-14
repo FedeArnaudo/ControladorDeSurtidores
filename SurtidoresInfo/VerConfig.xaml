@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:SurtidoresInfo"
         mc:Ignorable="d"
         Icon="LogoSiges24x24.ico"
-        Title="Info Surtidores"
+        Title="Configuracion de la Estacion"
         Height="300" Width="370"
         WindowStartupLocation="Manual" Background="Transparent"
         ResizeMode="NoResize">

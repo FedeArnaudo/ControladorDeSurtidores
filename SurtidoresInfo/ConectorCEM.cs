@@ -16,8 +16,8 @@ namespace SurtidoresInfo
 
         public ConectorCEM()
         {
-            ipControlador = Configuracion.leerConfiguracion().IpControlador;
-            protocolo = Configuracion.leerConfiguracion().Protocolo;
+            ipControlador = Configuracion.LeerConfiguracion().IpControlador;
+            protocolo = Configuracion.LeerConfiguracion().Protocolo;
         }
         public Estacion ConfiguracionDeLaEstacion()
         {
@@ -422,6 +422,10 @@ namespace SurtidoresInfo
                     _ = pipeClient.Read(buffer, 0, buffer.Length);
                 }
             }
+            catch (IOException e)
+            {
+                throw new IOException("Error al enviar el comando. Excepción: " + e.Message);
+            }
             catch (Exception e)
             {
                 throw new Exception("Error al enviar el comando. Excepción: " + e.Message);
@@ -508,7 +512,7 @@ namespace SurtidoresInfo
         private List<string[]> TraerDescripciones()
         {
             List<string[]> datos = new List<string[]>();
-            string rutaDatos = Configuracion.leerConfiguracion().ProyNuevoRuta + @"\tablas";
+            string rutaDatos = Configuracion.LeerConfiguracion().ProyNuevoRuta + @"\tablas";
             string connectionString = @"Driver={Driver para o Microsoft Visual FoxPro};SourceType=DBF;" + $@"Dbq={rutaDatos}\";
 
             // Definir la consulta SQL

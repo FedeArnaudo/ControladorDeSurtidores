@@ -32,7 +32,7 @@ namespace SurtidoresInfo
         }
         private void StatusForm_Load(object sender, EventArgs e)
         {
-            if (!Configuracion.existeConfiguracion())
+            if (!Configuracion.ExisteConfiguracion())
             {
                 VerConfig verConfig = new VerConfig
                 {
@@ -52,12 +52,16 @@ namespace SurtidoresInfo
 
         private void init()
         {
-            if (!Controlador.Init(Configuracion.leerConfiguracion()))
+            if (!Controlador.Init(Configuracion.LeerConfiguracion()))
             {
 
                 // TODO: Borrar archivo config para que no abra de vuelta.
 
                 //btnCerrar_Click(null, null); // Cerrar
+            }
+            else
+            {
+                _ = Log.Instance.WriteLog("Configuracion leida correctamente", Log.LogType.t_info);
             }
         }
 

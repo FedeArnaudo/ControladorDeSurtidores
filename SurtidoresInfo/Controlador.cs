@@ -1,20 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace SurtidoresInfo
 {
     abstract class Controlador
     {
         public Controlador()
-        {  }
-        public string tipoDeControlador { get; set; }
-        public string ipControlador { get; set; }
-        public int protocolo { get; set; }
-        public string rutaProyNuevo { get; set; }
+        { }
 
 
         // Instancia de Singleton
@@ -50,7 +42,7 @@ namespace SurtidoresInfo
         /// </summary>
         /// <param name="config"> La configuración extraída del archivo de configuración </param>
         /// <returns> true si se pudo inicializar correctamente </returns>
-        static public bool Init(Configuracion.InfoConfig infoConfig)
+        public static bool Init(Configuracion.InfoConfig infoConfig)
         {
             if (instancia == null)
             {

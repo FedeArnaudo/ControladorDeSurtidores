@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SurtidoresInfo
 {
@@ -24,7 +20,7 @@ namespace SurtidoresInfo
             public int Protocolo { get; set; }
         }
         private static readonly string configFile = Environment.CurrentDirectory + "/config.ini";
-        static public InfoConfig leerConfiguracion()
+        public static InfoConfig LeerConfiguracion()
         {
             InfoConfig infoConfig;
             try
@@ -36,7 +32,7 @@ namespace SurtidoresInfo
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Error al leer archivo de configuración. Excepción: " + e.Message);
+                    _ = Log.Instance.WriteLog("Error al leer archivo de configuración. Excepción: " + e.Message, Log.LogType.t_error);
                     return null;
                 }
 
@@ -52,12 +48,12 @@ namespace SurtidoresInfo
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error al leer archivo de configuración. Formato incorrecto. Excepción: " + e.Message);
+                _ = Log.Instance.WriteLog("Error al leer archivo de configuración. Formato incorrecto. Excepción: " + e.Message, Log.LogType.t_error);
                 return null;
             }
             return infoConfig;
         }
-        static public bool guardarConfiguracion(InfoConfig infoConfig)
+        public static bool GuardarConfiguracion(InfoConfig infoConfig)
         {
             try
             {
@@ -72,18 +68,14 @@ namespace SurtidoresInfo
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error al guardar la configuración. Excepción: " + e.Message);
+                _ = Log.Instance.WriteLog("Error al guardar la configuración. Excepción: " + e.Message, Log.LogType.t_error);
                 return false;
             }
             return true;
         }
-        static public bool existeConfiguracion()
+        public static bool ExisteConfiguracion()
         {
-            if (File.Exists(configFile))
-            {
-                return true;
-            }
-            return false;
+            return File.Exists(configFile);
         }
 
     }

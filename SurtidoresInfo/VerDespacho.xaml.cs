@@ -24,7 +24,7 @@ namespace SurtidoresInfo
         {
             InitializeComponent();
             Icon = new BitmapImage(new Uri("pack://application:,,,/SurtidoresInfo;component/LogoSiges24x24.ico"));
-            DataTable result = ConectorSQLite.dt_query("SELECT * FROM despachos ORDER BY fecha DESC");
+            DataTable result = ConectorSQLite.Dt_query("SELECT * FROM despachos ORDER BY fecha DESC");
             DataGridDatos.ItemsSource = result.AsDataView();
         }
         private void btnCerrar_Click(object sender, RoutedEventArgs e)
