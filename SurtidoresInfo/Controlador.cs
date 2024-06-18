@@ -82,6 +82,7 @@ namespace SurtidoresInfo
                 }
                 catch (Exception e)
                 {
+                    Log.Instance.WriteLog("Error en el loop del controlador. Excepcion: " + e.Message, Log.LogType.t_error);
                     Console.WriteLine("Error en el loop del controlador. Excepcion: " + e.Message);
                 }
             }
