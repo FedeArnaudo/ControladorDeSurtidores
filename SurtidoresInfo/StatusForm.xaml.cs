@@ -93,16 +93,16 @@ namespace SurtidoresInfo
         {
             notifyIcon = new NotifyIcon
             {
-                Icon = new Icon("LogoSiges24x24.ico"),
+                Icon = new Icon("Surtidor_2.ico"),
                 Visible = true,
                 Text = "Controlador De Surtidores"
             };
 
             notifyIcon.DoubleClick += NotifyIcon_DoubleClick;
 
-            var contextMenu = new System.Windows.Forms.ContextMenu();
-            contextMenu.MenuItems.Add("Restaurar", (s, e) => RestoreFromTray());
-            contextMenu.MenuItems.Add("Salir", (s, e) => ExitApplication());
+            System.Windows.Forms.ContextMenu contextMenu = new System.Windows.Forms.ContextMenu();
+            _ = contextMenu.MenuItems.Add("Restaurar", (s, e) => RestoreFromTray());
+            _ = contextMenu.MenuItems.Add("Salir", (s, e) => ExitApplication());
 
             notifyIcon.ContextMenu = contextMenu;
         }
@@ -112,8 +112,8 @@ namespace SurtidoresInfo
         }
         private void RestoreFromTray()
         {
-            this.Show();
-            this.WindowState = WindowState.Normal;
+            Show();
+            WindowState = WindowState.Normal;
             notifyIcon.Visible = false;
         }
         private void ExitApplication()
@@ -126,9 +126,9 @@ namespace SurtidoresInfo
         {
             base.OnStateChanged(e);
 
-            if (this.WindowState == WindowState.Minimized)
+            if (WindowState == WindowState.Minimized)
             {
-                this.Hide();
+                Hide();
                 notifyIcon.Visible = true;
             }
         }

@@ -409,26 +409,32 @@ namespace SurtidoresInfo
         {
             byte[] buffer;
             string ip = ipControlador;
-            try
+            using (NamedPipeClientStream pipeClient = new NamedPipeClientStream(ip, nombreDelPipe))
             {
-                using (NamedPipeClientStream pipeClient = new NamedPipeClientStream(ip, nombreDelPipe))
+                try
                 {
-                    pipeClient.Connect();
-
-                    pipeClient.Write(comando, 0, comando.Length);
-
-                    buffer = new byte[pipeClient.OutBufferSize];
-
-                    _ = pipeClient.Read(buffer, 0, buffer.Length);
+                    pipeClient.Connect(500);
                 }
-            }
-            catch (IOException e)
-            {
-                throw new IOException("Error al enviar el comando. Excepción: " + e.Message);
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Error al enviar el comando. Excepción: " + e.Message);
+                catch (TimeoutException e)
+                {
+                    throw new IOException("Error tiempo de espera al enviar el comando. Excepción: " + e.Message);
+                }
+                catch (IOException e)
+                {
+                    pipeClient.Close();
+                    pipeClient.Dispose();
+                    throw new IOException("Error input/output al enviar el comando. Excepción: " + e.Message);
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("Error al enviar el comando. Excepción: " + e.Message);
+                }
+
+                pipeClient.Write(comando, 0, comando.Length);
+
+                buffer = new byte[pipeClient.OutBufferSize];
+
+                _ = pipeClient.Read(buffer, 0, buffer.Length);
             }
             return buffer;
         }

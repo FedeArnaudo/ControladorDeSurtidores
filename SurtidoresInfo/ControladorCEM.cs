@@ -19,6 +19,7 @@ namespace SurtidoresInfo
             try
             {
                 List<Surtidor> tempSurtidores = estacion.nivelesDePrecio[0];
+                int numeroDeManguera = 1;
                 foreach (Surtidor surtidor in tempSurtidores)
                 {
                     string campos = "IdSurtidor,Manguera,Producto,Precio,DescProd";
@@ -60,6 +61,8 @@ namespace SurtidoresInfo
                                 manguera.producto.descripcion,
                                 surtidor.numeroDeSurtidor,
                                 letra));
+                        Log.Instance.WriteLog(string.Format("SURT: ({0}) Cem44: ({1}) Desc: ({2})", numeroDeManguera, surtidor.numeroDeSurtidor + letra, manguera.producto.descripcion), Log.LogType.t_info);
+                        numeroDeManguera++;
                     }
                 }
             }
@@ -291,6 +294,7 @@ namespace SurtidoresInfo
                             infoDespacho.Desc);
                         _ = ConectorSQLite.Query(string.Format("INSERT INTO despachos ({0}) VALUES ({1})", campos, rows));
                     }
+                    // Cuando se hagan los cierres esto se debe eliminar
                     DataTable cantidadDeFilas = ConectorSQLite.Dt_query("SELECT * FROM despachos");
                     if (cantidadDeFilas.Rows.Count >= 50)
                     {
@@ -311,19 +315,22 @@ namespace SurtidoresInfo
             {
                 for (int i = 0; i < tanques.Count; i++)
                 {
+                    string total = (Convert.ToDouble(tanques[i].VolumenProductoT) + Convert.ToDouble(tanques[i].VolumenVacioT) + Convert.ToDouble(tanques[i].VolumenAguaT)).ToString();
                     int res = ConectorSQLite.Query("UPDATE Tanques SET volumen = '" + tanques[i].VolumenProductoT +
-                        "" + "', total = '" + (Convert.ToDouble(tanques[i].VolumenProductoT) + Convert.ToDouble(tanques[i].VolumenVacioT) + Convert.ToDouble(tanques[i].VolumenAguaT)).ToString() +
+                        "" + "', total = '" + total +
                         "" + "' WHERE id = " + tanques[i].NumeroDeTanque);
 
                     if (res == 0)
                     {
+                        total = (Convert.ToDouble(tanques[i].VolumenProductoT) + Convert.ToDouble(tanques[i].VolumenVacioT) + Convert.ToDouble(tanques[i].VolumenAguaT)).ToString();
                         string campos = "id,volumen,total";
                         string rows = string.Format("{0},'{1}','{2}'",
                             tanques[i].NumeroDeTanque,
                             tanques[i].VolumenProductoT,
-                            (Convert.ToDouble(tanques[i].VolumenProductoT) + Convert.ToDouble(tanques[i].VolumenVacioT) + Convert.ToDouble(tanques[i].VolumenAguaT)).ToString());
+                            total);
                         _ = ConectorSQLite.Query(string.Format("INSERT INTO Tanques ({0}) VALUES ({1})", campos, rows));
                     }
+                    Log.Instance.WriteLog(string.Format("Tanque ({0}) CapacidadMaxima ({1}) CantidadActual ({2})", i, total, tanques[i].VolumenProductoT), Log.LogType.t_info);
                 }
             }
             catch (Exception e)

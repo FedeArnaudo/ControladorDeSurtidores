@@ -8,6 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("logosiges24x24.ico")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("surtidor.ico")]
 
 
